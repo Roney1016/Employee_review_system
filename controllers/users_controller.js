@@ -54,6 +54,44 @@ module.exports.create = async (req, res) => {
         return res.redirect('back')
     }
 }
+
+// Render add employee page
+module.exports.addEmployee = (req, res) => {
+    if (req.isAuthenticated()) {
+        if (req.user.role === 'admin') {
+            return res.render('add_employee', {
+                title: 'Add Employee ',
+            });
+        }
+    }
+    return res.redirect('/');
+};
+
+exports.createEmployee = async (req, res) => {
+    try {
+        const { username, email, password, confirm_password } = req.body;
+        // if password doesn't match
+        if (password != confirm_password) {
+            req.flash('error', 'Password and Confirm password are not same');
+            return res.redirect('back');
+        }
+        const user = await User.findOne({ email });
+        if (!user) {
+            await User.create({
+                email,
+                password,
+                username,
+            });
+            return res.redirect('/')
+        } else {
+            return res.redirect('/')
+        }
+    } catch (err) {
+        console.log('error', err);
+        return res.redirect('back');
+    }
+}
+
 module.exports.createSession = (req, res) => {
 
     if (req.user.role === 'admin') {
