@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(session({
-    name: 'Employee review system',
+    name: 'Employee_review_system',
     // TODO: change secret before deployment
     secret: "abcd",
     saveUninitialized: false,

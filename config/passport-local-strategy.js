@@ -11,18 +11,23 @@ passport.use(
         },
         function (req, email, password, done) {
             // find a user and establish the identity
-            User.findOne({ email: email }, async function (err, user) {
+            User.findOne({ email: email })
+                .then(async (user) => {
 
-                // match the password
-                const isPasswordCorrect = await user.isValidatedPassword(password);
+                    if (!user) {
+                        return done(null, false);
+                    }
+                    const isPasswordCorrect = await user.isValidatedPassword(password);
 
-                if (!isPasswordCorrect) {
-                    req.flash('error', 'Invalid username or password');
-                    return done(null, false);
-                }
+                    if (!isPasswordCorrect) {
 
-                return done(null, user);
-            });
+                        return done(null, false);
+                    }
+                    return done(null, user);
+                }).catch((err) => {
+                    return done(err);
+                })
+
         }
     )
 );
@@ -33,16 +38,20 @@ passport.serializeUser(function (user, done) {
 });
 
 // Deserializing the user from the key it the cookies
-passport.deserializeUser(function (id, done) {
-    User.findById(id, function (err, user) {
-        if (err) {
-            console.log('Error in finding user ---> Passport');
-            return done(err);
-        }
+passport.deserializeUser(async function (id, done) {
 
-        return done(null, user);
-    });
+    const user = await User.findById(id)
+    if (!user) {
+        console.log('Error in finding user ---> Passport');
+        return done(err);
+    }
+
+    return done(null, user);
 });
+
+
+
+
 
 // Check if user authenticated (middleware)
 passport.checkAuthentication = function (req, res, next) {
