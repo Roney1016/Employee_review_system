@@ -1,5 +1,5 @@
 const User = require('../models/user');
-
+const Review = require('../models/review');
 module.exports.signIn = (req, res) => {
 
     if (req.isAuthenticated()) {
@@ -86,6 +86,29 @@ exports.createEmployee = async (req, res) => {
         } else {
             return res.redirect('/')
         }
+    } catch (err) {
+        console.log('error', err);
+        return res.redirect('back');
+    }
+}
+
+// delet an user
+exports.destroy = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id);
+
+        // delete all the reviews in which this user is a recipient
+        await Review.deleteMany({ recipient: id });
+
+        // delete all the reviews in which this user is a reviewer
+        await Review.deleteMany({ reviewer: id });
+
+        // delete this user
+        await User.findByIdAndDelete(id);
+
+
+        return res.redirect('/');
     } catch (err) {
         console.log('error', err);
         return res.redirect('back');

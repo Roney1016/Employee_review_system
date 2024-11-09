@@ -10,7 +10,7 @@ router.get('/sign-out', userController.destroySession);
 router.get('/admin-dashboard', dashboardsController.adminDashboard);
 router.get('/employee-dashboard/:id', dashboardsController.employeeDashboard);
 router.get('/add-employee', userController.addEmployee);
-
+router.get('/destroy/:id', userController.destroy);
 router.post('/create', userController.create);// for self registration
 router.post('/create-employee', userController.createEmployee);
 router.post(
@@ -18,4 +18,5 @@ router.post(
     passport.authenticate('local', { failureRedirect: '/ma' }),
     userController.createSession
 );
+
 module.exports = router;
