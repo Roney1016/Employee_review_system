@@ -96,7 +96,7 @@ exports.createEmployee = async (req, res) => {
 exports.destroy = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.findById(id);
+
 
         // delete all the reviews in which this user is a recipient
         await Review.deleteMany({ recipient: id });
@@ -115,10 +115,64 @@ exports.destroy = async (req, res) => {
     }
 }
 
+// Render edit employee page
+module.exports.editEmployee = async (req, res) => {
+    try {
+        if (req.isAuthenticated()) {
+            if (req.user.role === 'admin') {
+                // populate employee with all the reviews (feedback) given by other users
+                const employee = await User.findById(req.params.id).populate({
+                    path: 'reviewsFromOthers',
+                    populate: {
+                        path: 'reviewer',
+                        model: 'User',
+                    },
+                });
+
+
+                // extracting reviews given by others from employee variable
+                const reviewsFromOthers = employee.reviewsFromOthers;
+
+                return res.render('edit_employee', {
+                    title: 'Edit Employee',
+                    employee,
+                    reviewsFromOthers,
+                });
+            }
+        }
+        return res.redirect('/');
+    } catch (err) {
+        console.log('error', err);
+        return res.redirect('back');
+    }
+};
+
+// Update employee details
+module.exports.updateEmployee = async (req, res) => {
+    try {
+        const employee = await User.findById(req.params.id);
+        const { username, role } = req.body;
+
+        if (!employee) {
+            return res.redirect('back');
+        }
+
+        // update data coming from req.body
+        employee.username = username;
+        employee.role = role;
+        employee.save(); // save the updated data
+
+        return res.redirect('/');
+    } catch (err) {
+        console.log('error', err);
+        return res.redirect('back');
+    }
+};
+
 module.exports.createSession = (req, res) => {
 
     if (req.user.role === 'admin') {
-        console.log("admin dashboard")
+        // console.log("admin dashboard")
         return res.redirect('/admin-dashboard');
     }
     // if user is not admin it will redirect to employee page
