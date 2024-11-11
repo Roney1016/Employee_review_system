@@ -11,6 +11,9 @@ router.get('/admin-dashboard', dashboardsController.adminDashboard);
 router.get('/employee-dashboard/:id', dashboardsController.employeeDashboard);
 router.get('/add-employee', userController.addEmployee);
 router.get('/destroy/:id', userController.destroy);
+router.get('/edit-employee/:id', userController.editEmployee);
+
+router.post('/update-employee/:id', userController.updateEmployee);
 router.post('/create', userController.create);// for self registration
 router.post('/create-employee', userController.createEmployee);
 router.post(

@@ -1,5 +1,5 @@
 const express = require('express');
-
+require('dotenv').config();
 const app = express();
 const expressLayouts = require('express-ejs-layouts');
 const cookieParser = require('cookie-parser'); // parse cookie header and populate req.cookies
@@ -30,7 +30,7 @@ app.use(session({
         maxAge: (1000 * 60 * 100)
     },
     store: new MongoStore({
-        mongoUrl: 'mongodb://127.0.0.1:27017/Manish',  // use your database connection here
+        mongoUrl: 'mongodb+srv://testdevlopment28:Zt2kXPijW4YPxEG5@cluster0.0pfhe.mongodb.net/?retryWrites=true&w=majority',  // use your database connection here
         autoRemove: 'native' // optional, removes expired sessions automatically
     })
 }));
