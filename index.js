@@ -1,5 +1,5 @@
 const express = require('express');
-require('dotenv').config();
+
 const app = express();
 const expressLayouts = require('express-ejs-layouts');
 const cookieParser = require('cookie-parser'); // parse cookie header and populate req.cookies
